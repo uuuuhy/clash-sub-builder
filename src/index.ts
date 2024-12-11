@@ -1,5 +1,8 @@
+import { setEnv } from "@cross/env";
+import { parseArgs } from "@std/cli";
 import fs from "node:fs";
 import path from "node:path";
+import process from "node:process";
 import yaml from "yaml";
 import { ROOT_PATH } from "./constance.ts";
 import {
@@ -7,21 +10,14 @@ import {
     getGroups,
     getRulesets,
 } from "./utils/configGetter.ts";
+import { uploadFileToGist } from "./utils/gist.ts";
 import {
     generateProxies,
     generateProxyGroups,
     generateRules,
 } from "./utils/index.ts";
 import { log } from "./utils/log.ts";
-import { uploadFileToGist } from "./utils/gist.ts";
 import { downloadACL4SSR } from "./utils/rulesDownloader.ts";
-import process from "node:process";
-
-// 类型声明
-interface Template {
-    name: string;
-    yaml: any; // 根据实际返回的类型，可以更精确地声明
-}
 
 async function main(): Promise<void> {
     // 确保 downloadACL4SSR 是异步执行
@@ -97,5 +93,16 @@ async function main(): Promise<void> {
     });
 }
 
-// 启动 main 函数
-main().catch((error) => log("error", error));
+if (import.meta.main) {
+    const parsedArgs = parseArgs(Deno.args) as {
+        env: string;
+    };
+
+    // 设置环境变量
+    if (parsedArgs.env === "development") {
+        setEnv("NODE_ENV", "development");
+    }
+
+    // 启动 main 函数
+    main().catch((error) => log("error", error));
+}

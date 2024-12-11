@@ -36,9 +36,7 @@ export function getRulesets() {
  * 获取 Clash 模板
  * @returns promise resolving to clash template array
  */
-export async function getClashTemplates(): Promise<
-    Array<{ name: string; yaml: any }>
-> {
+export async function getClashTemplates(): Promise<Array<Template>> {
     // 读取远程 gist 中的模板
     const templateFromGist = await getTemplateFromGist();
     if (templateFromGist) {

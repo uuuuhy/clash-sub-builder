@@ -14,6 +14,11 @@ interface RulesetsItem {
     ruleset: string;
 }
 
+interface Template {
+    name: string;
+    yaml: any; // 根据实际返回的类型，可以更精确地声明
+}
+
 /**
  * Clash 配置文件的 proxy-group 字段的配置
  */

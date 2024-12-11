@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 export function generateProxies(
     proxies: Array<ClashProxiesItem>
 ): Array<{ name: string }> {
-    console.log(process.env.NODE_ENV);
     if (!(Array.isArray(proxies) && proxies.length > 0)) {
         if (process.env.NODE_ENV === "development") {
             log("warn", "请在 template.yml 中添加 proxies 节点配置");

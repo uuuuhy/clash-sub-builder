@@ -1,6 +1,6 @@
 {
     "tasks": {
-        "dev": "export NODE_ENV=development && deno run -R -W -N -E --allow-run ./src/index.ts"
+        "dev": "deno run -R -W -N -E --allow-run ./src/index.ts --env=development"
     },
     "nodeModulesDir": "manual",
     "lint": {
@@ -9,5 +9,9 @@
                 "no-explicit-any"
             ]
         }
+    },
+    "imports": {
+        "@cross/env": "jsr:@cross/env@^1.0.2",
+        "@std/cli": "jsr:@std/cli@^1.0.8"
     }
 }

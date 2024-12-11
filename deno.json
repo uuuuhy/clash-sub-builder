@@ -1,0 +1,13 @@
+{
+    "tasks": {
+        "dev": "export NODE_ENV=development && deno run -R -W -N -E --allow-run ./src/index.ts"
+    },
+    "nodeModulesDir": "manual",
+    "lint": {
+        "rules": {
+            "exclude": [
+                "no-explicit-any"
+            ]
+        }
+    }
+}

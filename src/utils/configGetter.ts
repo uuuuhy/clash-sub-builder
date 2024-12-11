@@ -1,15 +1,16 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+import process from "node:process";
 import toml from "toml";
 import yaml from "yaml";
-import { CONFIG_DIR_PATH } from "../constance.js";
-import { getTemplateFromGist } from "./gist.js";
+import { CONFIG_DIR_PATH } from "../constance.ts";
+import { getTemplateFromGist } from "./gist.ts";
 
 /**
  * 获取 Groups 配置
- * @returns {Array.<Object>} custom groups array
+ * @returns custom groups array
  */
-export function getGroups() {
+export function getGroups(): Array<ProxyGroupItem> {
     const groupConfig = fs.readFileSync(
         path.resolve(CONFIG_DIR_PATH, "groups.toml"),
         "utf-8"
@@ -20,7 +21,7 @@ export function getGroups() {
 
 /**
  * 获取 Rulesets 配置
- * @returns {Array.<Object>} custom rulesets array
+ * @returns custom rulesets array
  */
 export function getRulesets() {
     const rulesetsConfig = fs.readFileSync(
@@ -28,15 +29,17 @@ export function getRulesets() {
         "utf-8"
     );
     const rulesetsConfigParsed = toml.parse(rulesetsConfig);
-    return rulesetsConfigParsed.rulesets;
+    return rulesetsConfigParsed.rulesets as RulesetsItem[];
 }
 
 /**
  * 获取 Clash 模板
- * @returns {Promise<Array.<Object>>} clash template
+ * @returns promise resolving to clash template array
  */
-export async function getClashTemplates() {
-    // 读取远程 gits 中的模板
+export async function getClashTemplates(): Promise<
+    Array<{ name: string; yaml: any }>
+> {
+    // 读取远程 gist 中的模板
     const templateFromGist = await getTemplateFromGist();
     if (templateFromGist) {
         return [
@@ -46,16 +49,17 @@ export async function getClashTemplates() {
             },
         ];
     }
+
     const filePaths = fs
         .readdirSync(CONFIG_DIR_PATH)
-        .filter((file) => {
-            return /^template.*\.yml$/.test(file);
-        })
+        .filter((file) => /^template.*\.yml$/.test(file))
         .map((file) => path.resolve(CONFIG_DIR_PATH, file));
+
     // 读取本地模板
     const templateFilesContent = filePaths.map((file) => {
         return fs.readFileSync(file, "utf-8");
     });
+
     return templateFilesContent.map((content, index) => ({
         name: path.basename(filePaths[index]),
         yaml: yaml.parse(content),
@@ -64,17 +68,19 @@ export async function getClashTemplates() {
 
 /**
  * 获取 gist 配置
- * @returns {Object} gist config
+ * @returns gist config object
  */
-export function getGistConfig() {
+export function getGistConfig(): { token: string; id: string } {
     // 环境变量模式
     const { GIST_TOKEN, GIST_ID } = process.env;
+
     // 配置文件模式
     const gistConfig = fs.readFileSync(
         path.resolve(CONFIG_DIR_PATH, "gist.toml"),
         "utf-8"
     );
     const tomlConfig = toml.parse(gistConfig).common[0];
+
     return {
         token: GIST_TOKEN || tomlConfig.token,
         id: GIST_ID || tomlConfig.id,

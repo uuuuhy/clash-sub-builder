@@ -1,46 +1,55 @@
-import fs from "fs";
-import path from "path";
-import { log } from "./log.js";
-import { listParser } from "./parser.js";
-import { GROUP_WHITE_LIST, RULE_WHITE_LIST } from "../constance.js";
-import { listRuleFormatter } from "./formatter.js";
+import fs from "node:fs";
+import path from "node:path";
+import process from "node:process";
+import { log } from "./log.ts";
+import { listParser } from "./parser.ts";
+import { GROUP_WHITE_LIST, RULE_WHITE_LIST } from "../constance.ts";
+import { listRuleFormatter } from "./formatter.ts";
 import dayjs from "dayjs";
 
 /**
  * 生成 Proxies yml 配置
- * @param {Array.<Object>} proxies
+ * @param proxies 节点配置数组
  */
-export function generateProxies(proxies) {
-    if (!(proxies instanceof Array && proxies.length > 0)) {
+export function generateProxies(
+    proxies: Array<ClashProxiesItem>
+): Array<{ name: string }> {
+    console.log(process.env.NODE_ENV);
+    if (!(Array.isArray(proxies) && proxies.length > 0)) {
         if (process.env.NODE_ENV === "development") {
             log("warn", "请在 template.yml 中添加 proxies 节点配置");
         } else {
             throw new Error("请在 template.yml 中添加 proxies 节点配置");
         }
     }
-    return (proxies ?? []).map((proxy) => {
+    return proxies.map((proxy) => {
         proxy.name = `${proxy.name} [v${dayjs().format("MMDD")}]`;
         return proxy;
     });
 }
 
 /**
- * 生成 Groups yml 配置
- * @param {Array.<Object>} proxies 节点配置
- * @param {Array.<Object>} groupsConfig
+ * 生成 Clash 配置文件 ProxyGroups 字段的配置
+ * @param proxies 节点配置数组
+ * @param groupsConfig 分组配置数组
  */
-export function generateProxyGroups(proxies, groupsConfig) {
+export function generateProxyGroups(
+    proxies: Array<ClashProxiesItem>,
+    groupsConfig: Array<ProxyGroupItem>
+) {
     const proxyNames = proxies?.map((item) => item.name) ?? [];
     const groupNames = groupsConfig?.map((item) => item.name) ?? [];
-    const result = [];
+    const result: Array<ClashProxyGroupItem> = [];
+
     for (const group of groupsConfig) {
         const groupConfig = {
             name: group.name,
             type: group.type,
             url: group.url,
             interval: group.interval,
-            proxies: [],
+            proxies: [] as string[],
         };
+
         for (const rule of group.rule) {
             const proxyRegExp = new RegExp(rule);
             // 先判断 rule 有没有命中 proxyNames
@@ -49,7 +58,6 @@ export function generateProxyGroups(proxies, groupsConfig) {
             );
             if (matchedProxyNames.length > 0) {
                 groupConfig.proxies.push(...matchedProxyNames);
-                // 去重
                 groupConfig.proxies = [...new Set(groupConfig.proxies)];
                 continue;
             }
@@ -59,7 +67,6 @@ export function generateProxyGroups(proxies, groupsConfig) {
             );
             if (matchedGroupNames.length > 0) {
                 groupConfig.proxies.push(...matchedGroupNames);
-                // 去重
                 groupConfig.proxies = [...new Set(groupConfig.proxies)];
                 continue;
             }
@@ -76,14 +83,18 @@ export function generateProxyGroups(proxies, groupsConfig) {
 
 /**
  * 生成 Rules yml 配置
- * @param {Array.<Object>} rulesets
- * @param {Array.<Object>} groupsConfig
+ * @param rulesets 规则集配置数组
+ * @param groupsConfig 分组配置数组
  */
-export function generateRules(rulesets, groupsConfig) {
+export function generateRules(
+    rulesets: Array<{ group: string; ruleset: string }>,
+    groupsConfig: Array<{ name: string }>
+): string[] {
     const groupNames = groupsConfig.map((item) => item.name);
-    const addedRules = [];
-    const rules = [];
-    for (let ruleset of rulesets) {
+    const addedRules: string[] = [];
+    const rules: string[] = [];
+
+    for (const ruleset of rulesets) {
         const group = ruleset.group;
         if (!groupNames.includes(group)) {
             log("warn", `规则集中的 group:${group} 不存在，已忽略`);
@@ -96,8 +107,9 @@ export function generateRules(rulesets, groupsConfig) {
                 path.resolve(rulesetConfig),
                 "utf-8"
             );
-            const rulesPart = [];
+            const rulesPart: string[] = [];
             let repeatCounter = 0;
+
             listParser(rulesFileContent).forEach((item) => {
                 // 去重
                 if (addedRules.includes(item)) {
@@ -107,6 +119,7 @@ export function generateRules(rulesets, groupsConfig) {
                 rulesPart.push(listRuleFormatter(item, group));
                 addedRules.push(item);
             });
+
             rules.push(...rulesPart);
             log(
                 "info",
@@ -120,6 +133,7 @@ export function generateRules(rulesets, groupsConfig) {
         }
         throw new Error(`规则集 ${rulesetConfig} 不存在`);
     }
+
     const notEmptyRules = rules.filter((item) => !!item);
     log("info", `规则生成完毕，共计 ${notEmptyRules.length} 条规则`);
     return notEmptyRules;

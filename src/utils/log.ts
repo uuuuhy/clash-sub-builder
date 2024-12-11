@@ -4,7 +4,15 @@ import utc from "dayjs/plugin/utc.js";
 
 dayjs.extend(utc);
 
-export function log(logType, message, ...rest) {
+type LogType = "warn" | "error" | "success" | "info" | "debug";
+
+/**
+ * 打印日志信息
+ * @param logType 日志类型
+ * @param message 日志内容
+ * @param rest 其他附加内容
+ */
+export function log(logType: LogType, message: string, ...rest: any[]): void {
     let prefix = "";
     switch (logType) {
         case "warn":

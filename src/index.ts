@@ -99,10 +99,8 @@ if (import.meta.main) {
     };
 
     // 设置环境变量
-    if (parsedArgs.env === "development") {
-        setEnv("NODE_ENV", "development");
-    } else if (parsedArgs.env === "production") {
-        setEnv("NODE_ENV", "production");
+    if (parsedArgs.env) {
+        setEnv("NODE_ENV", parsedArgs.env);
     }
 
     // 启动 main 函数

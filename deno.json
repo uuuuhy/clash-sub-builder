@@ -1,6 +1,8 @@
 {
     "tasks": {
-        "dev": "deno run -R -W -N -E --allow-run ./src/index.ts --env=development"
+        "start": "deno run -R -W -N -E --allow-run ./src/index.ts --env=production",
+        "dev": "deno run -R -W -N -E --allow-run ./src/index.ts --env=development",
+        "download:rules": "git clone --depth 1 --single-branch --branch master https://github.com/ACL4SSR/ACL4SSR.git ./rules/ACL4SSR"
     },
     "nodeModulesDir": "manual",
     "lint": {

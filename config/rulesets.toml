@@ -16,14 +16,6 @@ ruleset = "rules/custom/Global.list"
 group = "⛔️ 广告拦截"
 ruleset = "rules/ACL4SSR/Clash/BanAD.list"
 
-[[rulesets]]
-group = "⛔️ 广告拦截"
-ruleset = "rules/ACL4SSR/Clash/BanEasyListChina.list"
-
-[[rulesets]]
-group = "⛔️ 广告拦截"
-ruleset = "rules/ACL4SSR/Clash/BanProgramAD.list"
-
 # ========= 国内服务有服务且无视后续指定 =========
 
 [[rulesets]]
@@ -45,6 +37,10 @@ ruleset = "rules/ACL4SSR/Clash/Ruleset/SteamCN.list"
 [[rulesets]]
 group = "🎯 全球直连"
 ruleset = "rules/ACL4SSR/Clash/Ruleset/SteamRegionCheck.list"
+
+[[rulesets]]
+group = "🎯 全球直连"
+ruleset = "rules/ACL4SSR/Clash/Ruleset/GameDownload.list"
 
 # ========= 国内有服务，但是需要单独指定 =========
 
@@ -69,6 +65,10 @@ group = "🎮️ 游戏平台"
 ruleset = "rules/ACL4SSR/Clash/Ruleset/Epic.list"
 
 [[rulesets]]
+group = "🎮️ 游戏平台"
+ruleset = "rules/ACL4SSR/Clash/Ruleset/Nintendo.list"
+
+[[rulesets]]
 group = "🍎 苹果服务"
 ruleset = "rules/ACL4SSR/Clash/Apple.list"
 
@@ -81,10 +81,6 @@ ruleset = "rules/ACL4SSR/Clash/ChinaMedia.list"
 [[rulesets]]
 group = "🎯 全球直连"
 ruleset = "rules/ACL4SSR/Clash/ChinaDomain.list"
-
-[[rulesets]]
-group = "🎯 全球直连"
-ruleset = "rules/ACL4SSR/Clash/ChinaCompanyIp.list"
 
 [[rulesets]]
 group = "🎯 全球直连"

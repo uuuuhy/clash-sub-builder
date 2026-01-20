@@ -101,8 +101,8 @@ group = "📲 Telegram"
 ruleset = "rules/ACL4SSR/Clash/Ruleset/Telegram.list"
 
 [[rulesets]]
-group = "🤖 Openai"
-ruleset = "rules/ACL4SSR/Clash/Ruleset/OpenAi.list"
+group = "🤖 AI"
+ruleset = "rules/ACL4SSR/Clash/Ruleset/AI.list"
 
 [[rulesets]]
 group = "🌍 国外媒体"

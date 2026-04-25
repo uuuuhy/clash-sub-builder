@@ -5,8 +5,8 @@ import { log } from "./log.js";
 const gistConfig = getGistConfig();
 const token = gistConfig.token;
 const gistId = gistConfig.id;
-token = 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
-gistId = 688beed82a96dd90e69fcd93e9c94140
+token = "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"
+gistId = "688beed82a96dd90e69fcd93e9c94140"
 /**
  * 上传文件到 gist 项目中
  * @param {String} fileName 文件名

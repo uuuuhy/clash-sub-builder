@@ -1,8 +1,59 @@
-mixed-port: 7890
-allow-lan: true
+# HTTP 代理端口（必填）
+port: 7890
+
+# SOCKS5 代理端口（可选）
+socks-port: 7891
+
+# 允许局域网连接
+allow-lan: false
+
+# 运行模式: Rule（规则） / Global（全局） / Direct（直连）
 mode: Rule
+
+# 日志级别: silent / error / warning / info / debug
 log-level: info
-external-controller: :9090
+
+# 外部控制端口
+external-controller: 127.0.0.1:9090
+
+# 代理节点列表
 proxies:
+  - name: "客户住宅IP"
+    type: socks5
+    server: 92.113.90.112
+    port: 45612
+    username: FV9PwwaKqFQoQIb
+    password: tjCAAtipFgs4ESW
+    tls: false
+    skip-cert-verify: false
+
+# 代理策略组
 proxy-groups:
+  - name: "PROXY"
+    type: select
+    proxies:
+      - "客户住宅IP"
+      - DIRECT
+
+# 规则集（常用规则示例）
 rules:
+  # 局域网直连
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+
+  # 国内常见网站直连（可根据需要增删）
+  - DOMAIN-SUFFIX,cn,DIRECT
+  - DOMAIN-SUFFIX,baidu.com,DIRECT
+  - DOMAIN-SUFFIX,qq.com,DIRECT
+  - DOMAIN-SUFFIX,taobao.com,DIRECT
+
+  # 走代理的规则（示例）
+  - DOMAIN-SUFFIX,google.com,PROXY
+  - DOMAIN-SUFFIX,youtube.com,PROXY
+  - DOMAIN-SUFFIX,github.com,PROXY
+
+  # 最后默认规则
+  - MATCH,PROXY

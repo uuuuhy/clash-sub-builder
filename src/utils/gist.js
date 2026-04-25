@@ -39,6 +39,9 @@ export async function uploadFileToGist(fileName, fileContent) {
  * 从 gist 获取模板
  */
 export async function getTemplateFromGist() {
+    // 直接返回 null，使用本地模板
+    log("info", "跳过 Gist 模板下载，使用本地模板");
+    return null;
     if (!gistId || !token) {
         log("info", "未配置 Gist 信息，使用本地模板");
         return null;
